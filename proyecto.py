@@ -1,6 +1,98 @@
 import random
+from datetime import datetime
 
-def mostrar_instrucciones(puntos_ganar):
+
+
+lista_jugadores = []  
+lista_puntajes = []   
+
+def buscar_jugador(nombre):
+    """Busca un jugador en la lista sin importar mayúsculas/minúsculas"""
+    for i, jugador in enumerate(lista_jugadores):
+        if jugador.lower() == nombre.lower():
+            return i  # Retorna el índice del jugador
+    return -1  # No encontrado
+
+def registrar_o_obtener_jugador(numero_jugador):
+    """Registra un nuevo jugador o obtiene uno existente"""
+    global lista_jugadores, lista_puntajes
+    
+    nombre = input(f"Ingrese el nombre del Jugador {numero_jugador}: ").strip()
+    while not nombre:
+        nombre = input(f"El nombre no puede estar vacio. Ingrese el nombre del Jugador {numero_jugador}: ").strip()
+    
+    # Buscar si ya existe un jugador con ese nombre (ignorando mayúsculas/minúsculas)
+    indice_jugador = buscar_jugador(nombre)
+    
+    if indice_jugador != -1:
+        # Jugador existente
+        jugador_existente = lista_jugadores[indice_jugador]
+        puntaje_actual = lista_puntajes[indice_jugador]
+        print(f"Bienvenido de vuelta, {jugador_existente}!")
+        print(f"Tu puntaje global actual: {puntaje_actual}")
+        return jugador_existente
+    else:
+        # Nuevo jugador
+        nombre_normalizado = nombre.title()
+        lista_jugadores.append(nombre_normalizado)
+        lista_puntajes.append(0)  # Puntaje inicial de 0
+        print(f"Jugador {nombre_normalizado} registrado exitosamente!")
+        return nombre_normalizado
+
+def actualizar_puntaje_jugador(nombre, puntos_ganados):
+    """Actualiza el puntaje global del jugador"""
+    global lista_jugadores, lista_puntajes
+    
+    indice_jugador = buscar_jugador(nombre)
+    if indice_jugador != -1:
+        lista_puntajes[indice_jugador] += puntos_ganados
+        print(f"Puntaje de {nombre} actualizado: +{puntos_ganados} puntos (Total: {lista_puntajes[indice_jugador]})")
+
+def mostrar_ranking_completo():
+    """Muestra el ranking completo de todos los jugadores"""
+    global lista_jugadores, lista_puntajes
+    
+    if not lista_jugadores:
+        print("\nNo hay jugadores registrados aun.")
+        return
+    
+    # Crear lista de tuplas (nombre, puntaje) y ordenar por puntaje descendente
+    ranking_tuplas = list(zip(lista_jugadores, lista_puntajes))
+    ranking_tuplas.sort(key=lambda x: x[1], reverse=True)
+    
+    print("\n" + "="*40)
+    print("RANKING GENERAL DE JUGADORES")
+    print("="*40)
+    print(f"{'Pos':<4} {'Jugador':<20} {'Puntaje':<8}")
+    print("-"*40)
+    
+    for i, (nombre, puntaje) in enumerate(ranking_tuplas, 1):
+        medalla = "1" if i == 1 else "2" if i == 2 else "3" if i == 3 else " "
+        print(f"{medalla:<1} {i:<3} {nombre:<20} {puntaje:<8}")
+    
+    print("="*40)
+
+def mostrar_puntaje_jugador(nombre):
+    """Muestra el puntaje actual de un jugador específico"""
+    global lista_jugadores, lista_puntajes
+    
+    indice_jugador = buscar_jugador(nombre)
+    
+    if indice_jugador == -1:
+        print(f"\nNo se encontro el jugador: {nombre}")
+        return
+    
+    jugador_encontrado = lista_jugadores[indice_jugador]
+    puntaje_actual = lista_puntajes[indice_jugador]
+    
+    print(f"\nINFORMACION DE {jugador_encontrado.upper()}")
+    print("="*30)
+    print(f"Puntaje global actual: {puntaje_actual}")
+    print("="*30)
+
+
+
+def mostrar_instrucciones(rondas_totales):
     print("")
     print("=== BIENVENIDO AL JUEGO PAR O IMPAR ===")
     print("Este te ayudara en tu proceso de aprendizaje los temas: LIMITES y DERIVADAS")
@@ -9,28 +101,32 @@ def mostrar_instrucciones(puntos_ganar):
     print("- Si acierta la paridad, gana 1 punto")
     print("- Si falla, responde una pregunta de Verdadero/Falso, respecto a los temas: LIMITES y DERIVADAS")
     print("- Si responde correctamente, gana el punto; si no, no suma")
-    print(f"- El primer jugador en llegar a {puntos_ganar} puntos gana el juego")
+    print(f"- Se jugaran {rondas_totales} ronda(s) completa(s)")
+    print(f"- Cada ronda = ambos jugadores juegan una vez")
+    print(f"- Total de turnos: {rondas_totales * 2}")
+    print(f"- Gana quien tenga mas puntos al final de las rondas")
     print("--------------------------------------------------")
     print("")
 
 
-def prediccion(num_jugador):
+def prediccion(nombre_jugador):
     eleccion = ""
     while eleccion not in ["PAR", "IMPAR"]:
-        eleccion = input(f"Jugador {num_jugador}, elige PAR o IMPAR: ").upper()
+        eleccion = input(f"{nombre_jugador}, elige PAR o IMPAR: ").upper()
     
-    num_aleatorio = random.randint(1, 10)
+    num_aleatorio = random.randint(1, 100)  # Cambiado a 1-100 como en el .psc
     print(f"Número aleatorio generado: {num_aleatorio}")
     
     return eleccion, num_aleatorio
 
 
-def verificar_paridad(eleccion, num_aleatorio):
+def verificar_paridad(eleccion, num_aleatorio, nombre_jugador):
     if (num_aleatorio % 2 == 0 and eleccion == "PAR") or (num_aleatorio % 2 != 0 and eleccion == "IMPAR"):
-        print("¡Has acertado la paridad! Ganas 1 punto.")
+        print(f"{nombre_jugador} has acertado la paridad! Ganas 1 punto.")
         return True
     else:
-        print("No has acertado la paridad.")
+        paridad_real = "PAR" if num_aleatorio % 2 == 0 else "IMPAR"
+        print(f"{nombre_jugador}, no has acertado. El numero {num_aleatorio} es {paridad_real}.")
         return False
 
 
@@ -47,7 +143,7 @@ def hacer_pregunta_vf(preguntas, respuestas, justificaciones, total_preguntas):
         respuesta_pregunta = input("Ingresa tu respuesta (V/F): ").upper()
     
     if respuesta_pregunta == respuestas[indice_pregunta]:
-        print("¡Respuesta CORRECTA! Ganas 1 punto.")
+        print("Respuesta CORRECTA! Ganas 1 punto.")
         punto_ganado = 1
     else:
         print("Respuesta INCORRECTA. NO ganas el punto.")
@@ -112,53 +208,198 @@ justificaciones = [
 
 total_preguntas = len(preguntas)
 
-# PROGRAMA PRINCIPAL
-puntos_ganar = 5
-puntos_jugador1 = 0
-puntos_jugador2 = 0
-turno = 1  # Comienza el jugador 1
+def mostrar_menu_principal():
+    """Muestra el menú principal del juego"""
+    print("\n" + "="*60)
+    print("JUEGO PAR O IMPAR - LIMITES Y DERIVADAS")
+    print("="*60)
+    print("1. Jugar nueva partida")
+    print("2. Ver ranking completo")
+    print("3. Ver puntaje de un jugador")
+    print("4. Salir")
+    print("="*60)
 
-mostrar_instrucciones(puntos_ganar)
+def elegir_numero_rondas():
+    """Permite al usuario elegir el número de rondas a jugar"""
+    print("\n" + "="*50)
+    print("CONFIGURACION DE LA PARTIDA")
+    print("="*50)
+    print("NOTA: Una ronda = ambos jugadores juegan una vez cada uno")
+    
+    while True:
+        try:
+            rondas = int(input("Ingrese el numero de rondas a jugar (1-10): "))
+            if 1 <= rondas <= 10:
+                print(f"Perfecto! Se jugaran {rondas} ronda(s) = {rondas * 2} turnos totales")
+                return rondas
+            else:
+                print("Por favor ingrese un numero entre 1 y 10.")
+        except ValueError:
+            print("Por favor ingrese un numero valido.")
 
-# Bucle principal del juego
-while puntos_jugador1 < puntos_ganar and puntos_jugador2 < puntos_ganar:
-    print(f"\n--- TURNO DEL JUGADOR {turno} ---")
-    print(f"Puntajes actuales - Jugador 1: {puntos_jugador1} | Jugador 2: {puntos_jugador2}")
-    print("")
+def jugar_partida():
+    """Función principal para jugar una partida completa"""
+    # Elegir número de rondas
+    rondas_totales = elegir_numero_rondas()
     
-    # El jugador hace su predicción
-    eleccion, num_aleatorio = prediccion(turno)
+    # Mostrar instrucciones
+    mostrar_instrucciones(rondas_totales)
     
-    # Verificar si acertó la paridad
-    acerto = verificar_paridad(eleccion, num_aleatorio)
+    # Registrar jugadores
+    print("="*50)
+    print("REGISTRO DE JUGADORES")
+    print("="*50)
     
-    if acerto:
-        # Si acertó, gana 1 punto directamente
-        if turno == 1:
-            puntos_jugador1 += 1
+    nombre_jugador1 = registrar_o_obtener_jugador(1)
+    nombre_jugador2 = registrar_o_obtener_jugador(2)
+    
+    # Inicializar puntos y contadores
+    puntos_jugador1 = 0
+    puntos_jugador2 = 0
+    ronda_actual = 1
+    turno_en_ronda = 1  # 1 para jugador1, 2 para jugador2 en la ronda actual
+    
+    print(f"\nQue comience la partida entre {nombre_jugador1} y {nombre_jugador2}!")
+    input("Presiona ENTER para comenzar...")
+    
+    # Bucle principal del juego
+    while ronda_actual <= rondas_totales:
+        # Determinar jugador actual
+        if turno_en_ronda == 1:
+            nombre_actual = nombre_jugador1
+            nombre_oponente = nombre_jugador2
         else:
-            puntos_jugador2 += 1
-    else:
-        # Si falló, debe responder una pregunta
-        puntos = hacer_pregunta_vf(preguntas, respuestas, justificaciones, total_preguntas)
-        if turno == 1:
-            puntos_jugador1 += puntos
+            nombre_actual = nombre_jugador2
+            nombre_oponente = nombre_jugador1
+        
+        print(f"\n{'='*60}")
+        print(f"RONDA {ronda_actual}/{rondas_totales} - TURNO DE {nombre_actual.upper()}")
+        print(f"{nombre_jugador1}: {puntos_jugador1} pts | {nombre_jugador2}: {puntos_jugador2} pts")
+        print("="*60)
+        
+        # El jugador hace su predicción
+        eleccion, num_aleatorio = prediccion(nombre_actual)
+        
+        # Verificar si acertó la paridad
+        acerto = verificar_paridad(eleccion, num_aleatorio, nombre_actual)
+        
+        if acerto:
+            # Si acertó, gana 1 punto directamente
+            if turno_en_ronda == 1:
+                puntos_jugador1 += 1
+            else:
+                puntos_jugador2 += 1
         else:
-            puntos_jugador2 += puntos
+            # Si falló, debe responder una pregunta
+            print(f"\n{nombre_actual}, debes responder una pregunta para ganar el punto:")
+            puntos = hacer_pregunta_vf(preguntas, respuestas, justificaciones, total_preguntas)
+            if turno_en_ronda == 1:
+                puntos_jugador1 += puntos
+            else:
+                puntos_jugador2 += puntos
+        
+        # Mostrar puntos actualizados
+        print(f"\nPuntos actualizados:")
+        print(f"   {nombre_jugador1}: {puntos_jugador1} puntos")
+        print(f"   {nombre_jugador2}: {puntos_jugador2} puntos")
+        
+        # Cambiar de turno dentro de la ronda
+        if turno_en_ronda == 1:
+            turno_en_ronda = 2
+        else:
+            # Ronda completa, pasar a la siguiente
+            turno_en_ronda = 1
+            ronda_actual += 1
+        
+        # Pausa antes del siguiente turno
+        if ronda_actual <= rondas_totales:
+            input("\nPresiona ENTER para continuar...")
+        else:
+            input("\nPresiona ENTER para ver los resultados finales...")
     
-    # Cambiar de turno
-    if turno == 1:
-        turno = 2
+    # Determinar ganador y actualizar estadísticas
+    print("\n" + "="*60)
+    print("JUEGO TERMINADO!")
+    print("="*60)
+    
+    # Determinar ganador por mayor puntaje
+    if puntos_jugador1 > puntos_jugador2:
+        ganador = nombre_jugador1
+        puntos_ganador = puntos_jugador1
+        perdedor = nombre_jugador2
+        puntos_perdedor = puntos_jugador2
+        print(f"{ganador.upper()} HA GANADO con {puntos_ganador} puntos!")
+    elif puntos_jugador2 > puntos_jugador1:
+        ganador = nombre_jugador2
+        puntos_ganador = puntos_jugador2
+        perdedor = nombre_jugador1
+        puntos_perdedor = puntos_jugador1
+        print(f"{ganador.upper()} HA GANADO con {puntos_ganador} puntos!")
     else:
-        turno = 1
+        # Empate
+        print("EMPATE!")
+        print(f"Ambos jugadores terminaron con {puntos_jugador1} puntos")
+        ganador = None
+        
+    # Actualizar puntajes globales
+    actualizar_puntaje_jugador(nombre_jugador1, puntos_jugador1)
+    actualizar_puntaje_jugador(nombre_jugador2, puntos_jugador2)
+    
+    # Mostrar resultado final
+    print(f"\nPuntaje final:")
+    if ganador:
+        print(f"   1ro {ganador}: {puntos_ganador} puntos")
+        print(f"   2do {perdedor}: {puntos_perdedor} puntos")
+    else:
+        print(f"   {nombre_jugador1}: {puntos_jugador1} puntos")
+        print(f"   {nombre_jugador2}: {puntos_jugador2} puntos")
+    print("="*60)
+    
+    # Mostrar ranking actualizado
+    input("\nPresiona ENTER para ver el ranking actualizado...")
+    mostrar_ranking_completo()
 
-# Mostrar ganador
-print("\n" + "="*50)
-print("¡JUEGO TERMINADO!")
-print("="*50)
-if puntos_jugador1 >= puntos_ganar:
-    print(f"¡EL JUGADOR 1 HA GANADO con {puntos_jugador1} puntos!")
-else:
-    print(f"¡EL JUGADOR 2 HA GANADO con {puntos_jugador2} puntos!")
-print(f"Puntaje final - Jugador 1: {puntos_jugador1} | Jugador 2: {puntos_jugador2}")
-print("="*50)
+
+
+
+def main():
+    """Función principal del programa"""
+    while True:
+        mostrar_menu_principal()
+        
+        try:
+            opcion = input("Selecciona una opcion (1-4): ").strip()
+            
+            if opcion == "1":
+                jugar_partida()
+                
+            elif opcion == "2":
+                mostrar_ranking_completo()
+                input("\nPresiona ENTER para volver al menu...")
+                
+            elif opcion == "3":
+                nombre = input("Ingresa el nombre del jugador: ").strip()
+                if nombre:
+                    mostrar_puntaje_jugador(nombre)
+                else:
+                    print("Nombre no valido.")
+                input("\nPresiona ENTER para volver al menu...")
+                
+            elif opcion == "4":
+                print("\nGracias por jugar! Hasta la proxima!")
+                break
+                
+            else:
+                print("Opcion no valida. Por favor selecciona 1, 2, 3 o 4.")
+                input("Presiona ENTER para continuar...")
+                
+        except KeyboardInterrupt:
+            print("\n\nHasta luego!")
+            break
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+            input("Presiona ENTER para continuar...")
+
+
+if __name__ == "__main__":
+    main()
