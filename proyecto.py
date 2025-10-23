@@ -132,11 +132,11 @@ def verificar_paridad(eleccion, num_aleatorio, nombre_jugador):
 
 def hacer_pregunta_vf(preguntas, respuestas, justificaciones, total_preguntas):
     punto_ganado = 0
-    print("Debes responder una pregunta para ganar el punto:")
     print("")
     
     indice_pregunta = random.randint(0, total_preguntas - 1)
     print(preguntas[indice_pregunta])
+    print("")
     
     respuesta_pregunta = ""
     while respuesta_pregunta not in ["V", "F"]:
