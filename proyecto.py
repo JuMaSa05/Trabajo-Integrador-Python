@@ -1,8 +1,6 @@
 import random
 from datetime import datetime
 
-
-
 lista_jugadores = []  
 lista_puntajes = []   
 
