@@ -34,7 +34,7 @@ def registrar_o_obtener_jugador(numero_jugador):
         nombre_normalizado = nombre.title()
         lista_jugadores.append(nombre_normalizado)
         lista_puntajes.append(0)  # Puntaje inicial de 0
-        print(f"Jugador {nombre_normalizado} registrado exitosamente!")
+        print(f"\nJugador {nombre_normalizado} registrado exitosamente!\n")
         return nombre_normalizado
 
 def actualizar_puntaje_jugador(nombre, puntos_ganados):
@@ -92,9 +92,9 @@ def mostrar_puntaje_jugador(nombre):
 
 def mostrar_instrucciones(rondas_totales):
     print("")
-    print("=== BIENVENIDO AL JUEGO PAR O IMPAR ===")
-    print("Este te ayudara en tu proceso de aprendizaje los temas: LIMITES y DERIVADAS")
-    print("Reglas basicas:")
+    print("=== BIENVENIDO AL JUEGO PAR O IMPAR ===\n")
+    print("Este te ayudara en tu proceso de aprendizaje los temas: LIMITES y DERIVADAS\n")
+    print("Reglas basicas:\n")
     print("- Cada jugador debe adivinar si el numero sera PAR o IMPAR")
     print("- Si acierta la paridad, gana 1 punto")
     print("- Si falla, responde una pregunta de Verdadero/Falso, respecto a los temas: LIMITES y DERIVADAS")
@@ -102,7 +102,7 @@ def mostrar_instrucciones(rondas_totales):
     print(f"- Se jugaran {rondas_totales} ronda(s) completa(s)")
     print(f"- Cada ronda = ambos jugadores juegan una vez")
     print(f"- Total de turnos: {rondas_totales * 2}")
-    print(f"- Gana quien tenga mas puntos al final de las rondas")
+    print(f"- Gana quien tenga mas puntos al final de las rondas\n")
     print("--------------------------------------------------")
     print("")
 
@@ -141,13 +141,13 @@ def hacer_pregunta_vf(preguntas, respuestas, justificaciones, total_preguntas):
         respuesta_pregunta = input("Ingresa tu respuesta (V/F): ").upper()
     
     if respuesta_pregunta == respuestas[indice_pregunta]:
-        print("Respuesta CORRECTA! Ganas 1 punto.")
+        print("\nRespuesta CORRECTA! Ganas 1 punto.")
         punto_ganado = 1
     else:
-        print("Respuesta INCORRECTA. NO ganas el punto.")
-        print(f"La respuesta correcta era: {respuestas[indice_pregunta]}")
-        print(justificaciones[indice_pregunta])
+        print("\nRespuesta INCORRECTA. NO ganas el punto.")
+        print(f"\nLa respuesta correcta era: {respuestas[indice_pregunta]}")
         print("")
+        print(justificaciones[indice_pregunta])
     
     return punto_ganado
 
@@ -222,18 +222,18 @@ def elegir_numero_rondas():
     print("\n" + "="*50)
     print("CONFIGURACION DE LA PARTIDA")
     print("="*50)
-    print("NOTA: Una ronda = ambos jugadores juegan una vez cada uno")
+    print("\nNOTA: Una ronda = ambos jugadores juegan una vez cada uno")
     
     while True:
         try:
-            rondas = int(input("Ingrese el numero de rondas a jugar (1-10): "))
+            rondas = int(input("\nIngrese el numero de rondas a jugar (1-10): "))
             if 1 <= rondas <= 10:
-                print(f"Perfecto! Se jugaran {rondas} ronda(s) = {rondas * 2} turnos totales")
+                print(f"\nPerfecto! Se jugaran {rondas} ronda(s) = {rondas * 2} turnos totales")
                 return rondas
             else:
                 print("Por favor ingrese un numero entre 1 y 10.")
         except ValueError:
-            print("Por favor ingrese un numero valido.")
+            print("\nPor favor ingrese un numero valido.")
 
 def jugar_partida():
     """Función principal para jugar una partida completa"""
@@ -265,10 +265,8 @@ def jugar_partida():
         # Determinar jugador actual
         if turno_en_ronda == 1:
             nombre_actual = nombre_jugador1
-            nombre_oponente = nombre_jugador2
         else:
             nombre_actual = nombre_jugador2
-            nombre_oponente = nombre_jugador1
         
         print(f"\n{'='*60}")
         print(f"RONDA {ronda_actual}/{rondas_totales} - TURNO DE {nombre_actual.upper()}")
@@ -279,9 +277,9 @@ def jugar_partida():
         eleccion, num_aleatorio = prediccion(nombre_actual)
         
         # Verificar si acertó la paridad
-        acerto = verificar_paridad(eleccion, num_aleatorio, nombre_actual)
+        acierto = verificar_paridad(eleccion, num_aleatorio, nombre_actual)
         
-        if acerto:
+        if acierto:
             # Si acertó, gana 1 punto directamente
             if turno_en_ronda == 1:
                 puntos_jugador1 += 1
@@ -298,8 +296,8 @@ def jugar_partida():
         
         # Mostrar puntos actualizados
         print(f"\nPuntos actualizados:")
-        print(f"   {nombre_jugador1}: {puntos_jugador1} puntos")
-        print(f"   {nombre_jugador2}: {puntos_jugador2} puntos")
+        print(f"   {nombre_jugador1}: {puntos_jugador1} punto/s")
+        print(f"   {nombre_jugador2}: {puntos_jugador2} punto/s")
         
         # Cambiar de turno dentro de la ronda
         if turno_en_ronda == 1:
@@ -326,17 +324,17 @@ def jugar_partida():
         puntos_ganador = puntos_jugador1
         perdedor = nombre_jugador2
         puntos_perdedor = puntos_jugador2
-        print(f"{ganador.upper()} HA GANADO con {puntos_ganador} puntos!")
+        print(f"\n{ganador.upper()} HA GANADO con {puntos_ganador} punto/s!\n")
     elif puntos_jugador2 > puntos_jugador1:
         ganador = nombre_jugador2
         puntos_ganador = puntos_jugador2
         perdedor = nombre_jugador1
         puntos_perdedor = puntos_jugador1
-        print(f"{ganador.upper()} HA GANADO con {puntos_ganador} puntos!")
+        print(f"\n{ganador.upper()} HA GANADO con {puntos_ganador} punto/s!\n")
     else:
         # Empate
-        print("EMPATE!")
-        print(f"Ambos jugadores terminaron con {puntos_jugador1} puntos")
+        print("\nEMPATE!")
+        print(f"\nAmbos jugadores terminaron con {puntos_jugador1} punto/s\n")
         ganador = None
         
     # Actualizar puntajes globales
@@ -344,13 +342,14 @@ def jugar_partida():
     actualizar_puntaje_jugador(nombre_jugador2, puntos_jugador2)
     
     # Mostrar resultado final
-    print(f"\nPuntaje final:")
+    print(f"\nPuntaje final:\n")
     if ganador:
-        print(f"   1ro {ganador}: {puntos_ganador} puntos")
-        print(f"   2do {perdedor}: {puntos_perdedor} puntos")
+        print(f"   1ro {ganador}: {puntos_ganador} punto/s")
+        print(f"   2do {perdedor}: {puntos_perdedor} punto/s")
     else:
-        print(f"   {nombre_jugador1}: {puntos_jugador1} puntos")
-        print(f"   {nombre_jugador2}: {puntos_jugador2} puntos")
+        print(f"   {nombre_jugador1}: {puntos_jugador1} punto/s")
+        print(f"   {nombre_jugador2}: {puntos_jugador2} punto/s")
+    print("")
     print("="*60)
     
     # Mostrar ranking actualizado
@@ -376,7 +375,7 @@ def main():
                 input("\nPresiona ENTER para volver al menu...")
                 
             elif opcion == "3":
-                nombre = input("Ingresa el nombre del jugador: ").strip()
+                nombre = input("\nIngresa el nombre del jugador: ").strip()
                 if nombre:
                     mostrar_puntaje_jugador(nombre)
                 else:
@@ -398,6 +397,4 @@ def main():
             print(f"Error inesperado: {e}")
             input("Presiona ENTER para continuar...")
 
-
-if __name__ == "__main__":
-    main()
+main()
